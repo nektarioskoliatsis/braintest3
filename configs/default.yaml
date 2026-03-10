@@ -1,0 +1,106 @@
+# Embodied Fly — Default Configuration
+# ======================================
+
+# Spiking CPG parameters
+cpg:
+  # Number of neurons per leg module
+  neurons_per_module: 20        # 10 excitatory + 10 inhibitory per half-center
+  num_legs: 6                   # L1, L2, L3, R1, R2, R3
+
+  # LIF neuron parameters
+  tau_m: 10.0                   # Membrane time constant (ms)
+  v_rest: -65.0                 # Resting potential (mV)
+  v_thresh: -50.0               # Spike threshold (mV)
+  v_reset: -70.0                # Reset potential (mV)
+  t_refrac: 2.0                 # Refractory period (ms)
+  R_m: 10.0                     # Membrane resistance (MOhm)
+
+  # Synaptic parameters
+  tau_syn_exc: 5.0              # Excitatory synapse time constant (ms)
+  tau_syn_inh: 10.0             # Inhibitory synapse time constant (ms)
+
+  # Network connectivity
+  w_exc_self: 3.0               # Excitatory recurrent weight within half-center
+  w_inh_cross: -6.0             # Cross-inhibition weight between half-centers (half-center oscillator)
+  w_contralateral: -2.5         # Contralateral inhibition (left-right alternation)
+  w_ipsilateral: 1.5            # Ipsilateral coupling (front-to-back wave)
+
+  # Drive parameters
+  I_drive: 5.0                  # External tonic drive current (nA)
+  noise_std: 1.0                # Gaussian noise standard deviation (nA)
+  oscillation_freq: 10.0        # Target oscillation frequency (Hz)
+
+  # Simulation
+  dt: 0.1                       # Neural simulation timestep (ms)
+
+# Connectome-inspired wiring parameters
+connectome:
+  # Neuron type ratios from VNC motor circuits (Dorkenwald et al., 2024)
+  mn_fraction: 0.3              # Motor neuron fraction per module
+  exc_in_fraction: 0.35         # Excitatory interneuron fraction
+  inh_in_fraction: 0.35         # Inhibitory interneuron fraction
+
+  # Connectivity probabilities
+  p_local: 0.4                  # Connection probability within a module
+  p_contralateral: 0.15         # Connection probability between contralateral legs
+  p_ipsilateral: 0.2            # Connection probability between ipsilateral neighbors
+
+  # Weight scaling
+  weight_scale: 1.0             # Global weight multiplier
+
+# Neural controller / decoder
+controller:
+  # Spike rate decoder
+  decode_window: 50.0           # Sliding window for spike rate decoding (ms)
+
+  # Joint angle mapping
+  # Joints per leg: ThC_pitch, ThC_yaw, CTr, FTi, TiTa
+  joints_per_leg: 7             # Number of DoF per leg in FlyGym
+
+  # Gain parameters (joint angle range in radians)
+  gain_ThC_pitch: 0.8
+  gain_ThC_yaw: 0.3
+  gain_CTr: 1.0
+  gain_FTi: 1.2
+  gain_TiTa: 0.5
+
+  # Default joint offsets (radians)
+  offset_ThC_pitch: 0.0
+  offset_ThC_yaw: 0.0
+  offset_CTr: 0.5
+  offset_FTi: -1.0
+  offset_TiTa: -0.5
+
+# FlyGym environment
+environment:
+  # Physics
+  physics_dt: 0.0001            # MuJoCo timestep (seconds) = 0.1ms (FlyGym default)
+  neural_steps_per_physics: 1   # 1 neural step (0.1ms) per physics step (0.1ms)
+
+  # Simulation duration
+  sim_duration: 2.0             # Simulation duration (seconds)
+
+  # Terrain
+  terrain: "flat"               # Terrain type
+
+  # Rendering
+  render_mode: "saved"          # "saved" for headless video, "viewer" for GUI
+  render_fps: 30                # Output video frame rate
+  render_playback_speed: 0.2    # Slow motion factor
+  camera: "camera_left"          # Camera for rendering
+
+# Analysis
+analysis:
+  # Gait analysis
+  tripod_threshold: 0.5         # Min fraction of tripod support to count as tripod gait
+  min_stride_duration: 0.03     # Minimum stride duration (s) for detection
+
+  # Neural analysis
+  raster_bin_size: 1.0          # Bin size for spike rate estimation (ms)
+  phase_n_cycles: 5             # Number of cycles for phase analysis
+
+# Output paths
+output:
+  video_dir: "output/videos"
+  plot_dir: "output/plots"
+  data_dir: "output/data"
